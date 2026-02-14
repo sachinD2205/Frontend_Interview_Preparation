@@ -1,0 +1,27 @@
+
+Problem: Implement mapLimit
+
+How to implement custom map function with limit on number of operations? 
+| Paytm Frontend Interview Question | Uber Frontend Interview Question
+
+
+Arguments
+inputs → Array of values
+limit → Maximum number of async operations running at once
+iterateeFn(input, callback) → Async function
+callback(results) → Final callback after all inputs are processed
+
+Requirements
+At any time, only limit operations should run
+Preserve result order
+Call final callback only after all operations complete
+
+
+Example
+mapLimit([1,2,3,4,5], 2, getUserById, (results) => {
+  console.log(results);
+});
+
+Expected Output:
+["User1", "User2", "User3", "User4", "User5"]
+
