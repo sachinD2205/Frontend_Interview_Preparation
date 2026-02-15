@@ -4,6 +4,10 @@ Problem: Implement mapLimit
 How to implement custom map function with limit on number of operations? 
 | Paytm Frontend Interview Question | Uber Frontend Interview Question
 
+Function Signature
+mapLimit(inputs, limit, iterateeFn, callback)
+
+
 
 Arguments
 inputs → Array of values

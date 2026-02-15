@@ -55,3 +55,12 @@ function mapLimit(inputs, limit, iterateeFn, callback) {
 mapLimit([1, 2, 3, 4, 5], 2, getUserById, (allResults) => {
   console.print('output:', allResults) // ["User1", "User2", "User3", "User4", "User5"]
 });
+
+
+
+//! key concepts
+// index tracks the next task to start
+// runningCount tracks active async operations
+// completedCount ensures final callback runs once
+// next() works as a scheduler
+// Result order is preserved using currentIndex

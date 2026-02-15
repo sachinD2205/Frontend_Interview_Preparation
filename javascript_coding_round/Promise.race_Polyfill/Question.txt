@@ -1,0 +1,10 @@
+Implement Promise.race (Polyfill)
+
+Problem Statement:
+Create a function promiseRace(promises) that mimics native Promise.race().
+
+It should:
+Accept an array of promises (or values)
+Return a promise
+Settle as soon as the first promise settles
+If input is empty → returned promise should never settle
