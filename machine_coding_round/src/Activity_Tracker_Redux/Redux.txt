@@ -1,0 +1,312 @@
+═══════════════════════════════════════════════════════════════════
+📦 REDUX TOOLKIT SETUP GUIDE
+═══════════════════════════════════════════════════════════════════
+
+🔧 STEP 1: INSTALLATION
+───────────────────────────────────────────────────────────────────
+npm install @reduxjs/toolkit react-redux
+# or
+pnpm i @reduxjs/toolkit react-redux
+
+
+🔧 STEP 2: CREATE SLICE (State + Reducers)
+───────────────────────────────────────────────────────────────────
+File: src/activityTrackerSlice.js
+
+import { createSlice, nanoid } from "@reduxjs/toolkit";
+
+const activityTrackerSlice = createSlice({
+  name: "activityTracker",
+  initialState: {
+    activities: []
+  },
+  reducers: {
+    addActivity: {
+      reducer(state, action) {
+        state.activities.push(action.payload);
+      }
+    },
+    deleteActivity: {
+      reducer(state, action) {
+        state.activities = state.activities.filter(
+          (activity) => activity.id !== action.payload
+        );
+      }
+    },
+    editActivity: {
+      reducer(state, action) {
+        state.activities = state.activities.map((activity) =>
+          activity.id === action.payload.id ? action.payload : activity
+        );
+      }
+    }
+  }
+});
+
+export const { addActivity, deleteActivity, editActivity } = activityTrackerSlice.actions;
+export default activityTrackerSlice.reducer;
+
+
+🔧 STEP 3: CREATE STORE
+───────────────────────────────────────────────────────────────────
+File: store.js
+
+import { configureStore } from "@reduxjs/toolkit";
+import activityTrackerSlice from "./src/activityTrackerSlice";
+
+const store = configureStore({
+  reducer: {
+    activityTracker: activityTrackerSlice
+  }
+});
+
+export default store;
+
+
+🔧 STEP 4: WRAP APP WITH PROVIDER
+───────────────────────────────────────────────────────────────────
+File: App.jsx
+
+import { Provider } from "react-redux";
+import store from "./store";
+
+function App() {
+  return (
+    <Provider store={store}>
+      <YourComponent />
+    </Provider>
+  );
+}
+
+
+🔧 STEP 5: USE IN COMPONENTS
+───────────────────────────────────────────────────────────────────
+import { useDispatch, useSelector } from "react-redux";
+import { addActivity, deleteActivity } from "./activityTrackerSlice";
+
+function Component() {
+  // Read data from Redux
+  const activities = useSelector((state) => state.activityTracker.activities);
+
+  // Dispatch actions
+  const dispatch = useDispatch();
+
+  const handleAdd = () => {
+    dispatch(addActivity({ id: nanoid(), name: "Running" }));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteActivity(id));
+  };
+}
+
+
+═══════════════════════════════════════════════════════════════════
+⚖️ CONTEXT API vs REDUX - INTERVIEW PERSPECTIVE
+═══════════════════════════════════════════════════════════════════
+
+📊 WHEN TO USE CONTEXT API:
+───────────────────────────────────────────────────────────────────
+✅ Simple state (theme, user info, language)
+✅ State doesn't change frequently
+✅ Small to medium apps
+✅ 2-3 global states maximum
+✅ No complex state logic
+
+Example: Theme switching, Auth state, Language preference
+
+
+📊 WHEN TO USE REDUX:
+───────────────────────────────────────────────────────────────────
+✅ Complex state management
+✅ Frequent state updates
+✅ Multiple components need same data
+✅ State logic is complex (calculations, filtering)
+✅ Need middleware (logging, API calls)
+✅ Time-travel debugging needed
+✅ Large scale applications
+
+Example: E-commerce cart, Social media feed, Dashboard with filters
+
+
+📊 KEY DIFFERENCES:
+───────────────────────────────────────────────────────────────────
+| Feature              | Context API          | Redux               |
+|----------------------|----------------------|---------------------|
+| Setup Complexity     | Simple               | More boilerplate    |
+| Performance          | Re-renders more      | Optimized           |
+| DevTools             | No                   | Yes (Redux DevTools)|
+| Middleware           | No                   | Yes                 |
+| Code Splitting       | Harder               | Easier              |
+| Learning Curve       | Easy                 | Moderate            |
+| Best for             | Simple state         | Complex state       |
+
+
+📊 TRADE-OFFS:
+───────────────────────────────────────────────────────────────────
+Context API:
+  ✅ Pros: Built-in, simple, less code
+  ❌ Cons: Performance issues with frequent updates, no DevTools
+
+Redux:
+  ✅ Pros: Better performance, DevTools, middleware, scalable
+  ❌ Cons: More boilerplate, steeper learning curve
+
+
+═══════════════════════════════════════════════════════════════════
+🎯 INTERVIEW TIPS & COMMON QUESTIONS
+═══════════════════════════════════════════════════════════════════
+
+Q1: Why use Redux Toolkit over plain Redux?
+───────────────────────────────────────────────────────────────────
+✅ Less boilerplate code
+✅ Built-in Immer (mutate state directly)
+✅ Includes Redux DevTools setup
+✅ createSlice combines actions + reducers
+✅ configureStore includes middleware by default
+
+
+Q2: What is a reducer?
+───────────────────────────────────────────────────────────────────
+A pure function that takes (state, action) and returns new state.
+Must be pure - no side effects, API calls, or mutations.
+
+Example:
+reducer(state, action) {
+  switch(action.type) {
+    case 'ADD': return [...state, action.payload];
+    default: return state;
+  }
+}
+
+
+Q3: What is an action?
+───────────────────────────────────────────────────────────────────
+Plain JavaScript object with 'type' and optional 'payload'.
+
+Example:
+{ type: 'addActivity', payload: { id: 1, name: 'Running' } }
+
+
+Q4: What is dispatch?
+───────────────────────────────────────────────────────────────────
+Function to send actions to the Redux store to update state.
+
+dispatch(addActivity(data));
+
+
+Q5: What is useSelector?
+───────────────────────────────────────────────────────────────────
+Hook to read data from Redux store.
+
+const activities = useSelector(state => state.activityTracker.activities);
+
+
+Q6: Can you directly mutate state in Redux Toolkit?
+───────────────────────────────────────────────────────────────────
+✅ YES in Redux Toolkit (uses Immer internally)
+❌ NO in plain Redux
+
+Redux Toolkit:
+state.activities.push(newActivity); // ✅ Allowed
+
+Plain Redux:
+state.activities.push(newActivity); // ❌ Wrong
+return [...state.activities, newActivity]; // ✅ Correct
+
+
+Q7: What is the difference between Redux and Redux Toolkit?
+───────────────────────────────────────────────────────────────────
+Redux Toolkit is the modern, recommended way to write Redux.
+It simplifies setup and reduces boilerplate.
+
+
+═══════════════════════════════════════════════════════════════════
+✨ BEST PRACTICES
+═══════════════════════════════════════════════════════════════════
+1. Keep slices small and focused (one feature per slice)
+2. Use descriptive action names (addActivity, not ADD)
+3. Store normalized data (avoid nested objects)
+4. Don't store derived data (calculate in selector)
+5. Use TypeScript for type safety
+6. Keep business logic in reducers, not components
+7. Use useSelector with specific selectors (avoid selecting entire state)
+8. Memoize expensive selectors with useMemo or reselect
+
+
+═══════════════════════════════════════════════════════════════════
+🔍 DEBUGGING TIPS
+═══════════════════════════════════════════════════════════════════
+1. Install Redux DevTools Extension
+2. Use console.log in reducers (but remove in production)
+3. Check if action is dispatched correctly
+4. Verify payload structure
+5. Ensure reducer returns new state, not mutated state (plain Redux)
+
+
+═══════════════════════════════════════════════════════════════════
+📝 COMMON MISTAKES TO AVOID
+═══════════════════════════════════════════════════════════════════
+❌ Mutating state directly (plain Redux)
+❌ Async logic in reducers
+❌ Calling dispatch in reducer
+❌ Not exporting actions
+❌ Typo in reducer key names
+❌ Forgetting to wrap App with Provider
+❌ Selecting entire state instead of specific slice
+❌ Not handling all action types in reducer
+
+
+═══════════════════════════════════════════════════════════════════
+🚀 SAMPLE PROJECT STRUCTURE
+═══════════════════────────────────────────────────────────────────
+src/
+├── store.js                    (Configure store)
+├── features/
+│   ├── activity/
+│   │   ├── activitySlice.js   (Slice with reducers)
+│   │   ├── ActivityList.jsx   (Component)
+│   │   └── AddActivity.jsx    (Component)
+├── App.jsx                     (Wrap with Provider)
+└── main.jsx
+
+
+═══════════════════════════════════════════════════════════════════
+💡 INTERVIEW SCENARIO QUESTIONS
+═══════════════════════════════════════════════════════════════════
+
+Scenario 1: "Your app is slow due to Redux re-renders. How do you fix it?"
+Answer:
+- Use useSelector with specific selectors (not entire state)
+- Memoize selectors with useMemo or reselect
+- Split large slices into smaller ones
+- Use React.memo for components
+- Check if you're creating new objects in selectors
+
+
+Scenario 2: "When would you choose Context API over Redux?"
+Answer:
+For simple, infrequent state updates like:
+- Theme switching
+- User authentication status
+- Language preference
+Use Redux when state is complex, updates frequently, or needs DevTools.
+
+
+Scenario 3: "How do you handle async operations in Redux?"
+Answer:
+- Use Redux Toolkit's createAsyncThunk
+- Or use middleware like redux-thunk
+- Never put async logic directly in reducers
+
+
+═══════════════════════════════════════════════════════════════════
+📚 QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════
+createSlice()       → Creates slice with actions + reducer
+configureStore()    → Creates Redux store
+useSelector()       → Read data from store
+useDispatch()       → Send actions to store
+nanoid()           → Generate unique IDs
+Provider           → Makes store available to components
+ 

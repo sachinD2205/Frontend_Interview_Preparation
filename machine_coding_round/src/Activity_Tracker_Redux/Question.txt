@@ -1,0 +1,39 @@
+🧩 Problem Statement: Fitness Activity Tracker (Redux Toolkit)
+
+📌 Objective
+Build a simple Fitness Activity Tracker using React + Redux Toolkit.
+The application should allow users to add and manage fitness activities.
+
+📋 Requirements
+
+1️⃣ Add Activity
+User should be able to add:
+- Activity Name (string)
+- Calories Burned (number)
+- Time Spent (in minutes, number)
+- On clicking the Add button:
+- Activity should be stored in Redux state
+- Each activity must have a unique ID
+- Input fields should clear after submission
+
+2️⃣ Display Activities
+Show all added activities in a list
+Display:
+- Activity Name
+- Calories Burned
+- Time Spent
+
+3️⃣ Filter Based on Activities
+- Filter based on Activity
+
+functionality
+- Add Delete functionality
+- show all added activity 
+- dropdown for filter based on activity
+- Add validation (empty fields not allowed)
+
+State Management
+- Use Redux Toolkit
+- Use createSlice
+- Use configureStore
+- Use useDispatch and useSelector
